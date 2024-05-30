@@ -53,7 +53,7 @@ for column in mean_df.columns:
         downregulated_data[column] = set(mean_df.index[z_scores < -significant_threshold])
 
 # Step 8: Plot UpSet plots for proteins with increased and decreased expressions compared to control
-def plot_upset(data, title, bar_color):
+def plot_upset(data, title, bar_color, filename):
     if any(len(d) > 0 for d in data.values()):
         keys_sorted = sorted(data.keys())
         sorted_data = {key: data[key] for key in keys_sorted}
@@ -67,6 +67,7 @@ def plot_upset(data, title, bar_color):
         plt.yticks(fontsize=tick_fontsize)
         plt.xlabel('Conditions', fontsize=label_fontsize)
         plt.ylabel('Number of Proteins', fontsize=label_fontsize)
+        plt.savefig(filename, format='svg')
         plt.show()
     else:
         print(f"No significant {title.lower()} found.")
@@ -76,5 +77,10 @@ title_fontsize = 20
 label_fontsize = 18
 tick_fontsize = 16
 
-plot_upset(upregulated_data, 'General Increase in Expression Relative to Control', 'darkred')
-plot_upset(downregulated_data, 'General Decrease in Expression Relative to Control', 'darkblue')
+# Plot and save the UpSet plots as SVG files
+plot_upset(upregulated_data, 'General Increase in Expression Relative to Control', 'darkred', 'upregulated.svg')
+plot_upset(downregulated_data, 'General Decrease in Expression Relative to Control', 'darkblue', 'downregulated.svg')
+
+# Download the SVG files
+files.download('upregulated.svg')
+files.download('downregulated.svg')
